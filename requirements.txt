@@ -1,4 +1,8 @@
+annotated-types==0.5.0
 greenlet==2.0.2
+pydantic==1.10.6
+pydantic_core==2.1.2
+PyMySQL==1.1.0
 python-dotenv==1.0.0
 SQLAlchemy==2.0.18
 typing_extensions==4.7.1
