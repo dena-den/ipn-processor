@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy import insert, select
 from os import getenv
-
-from schemas import *
 from datetime import datetime
+
+from .schemas import Transaction
 
 
 class Database:
