@@ -1,13 +1,10 @@
 import http.server
 import socketserver
 import json
-from dotenv import load_dotenv
 
-from utils import sign_verificator
-from db.utils import database
-
-
-load_dotenv()
+from core.utils import sign_verifier
+from core.db.utils import database
+from core.config import settings
 
 
 class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -20,13 +17,13 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data)
 
-        if sign_verificator(data):
+        if sign_verifier(data):
             database.put_data(data)
             result = 'SUCCESS'
         else:
             result = 'FAILED'
 
-        with open(f'./ipn_transactions_log.txt', 'a') as file:
+        with open(f'./ipn_transaction_log.txt', 'a') as file:
             file.write(post_data.decode())
             file.write(f' - {result}\n')
 
@@ -34,11 +31,11 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 # Set the server address and port
-server_address = ('', 8000)
+server_address = ('', settings.PORT)
 
 # Create an instance of the server with the defined request handler
 httpd = socketserver.TCPServer(server_address, MyRequestHandler)
 
 # Start the server
-print('Server running on port 8000...')
+print(f'Server running on port {settings.PORT}...')
 httpd.serve_forever()

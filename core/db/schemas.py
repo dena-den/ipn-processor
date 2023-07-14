@@ -16,7 +16,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(30))
     phone: Mapped[Optional[str]] = mapped_column(String(30))
 
-    balances: Mapped['UserBalance'] = relationship()
+    balances: Mapped['UserBalance'] = relationship(back_populates='user')
 
 
 class UserBalance(Base):
@@ -26,13 +26,13 @@ class UserBalance(Base):
     btc: Mapped[float] = mapped_column(default=0)
     usdt: Mapped[float] = mapped_column(default=0)
 
-    user: Mapped['User'] = relationship()
+    user: Mapped['User'] = relationship(back_populates='balances')
 
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(nullable=False)
     currency: Mapped[str]
     date: Mapped[datetime]
