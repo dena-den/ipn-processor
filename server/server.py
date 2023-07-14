@@ -3,8 +3,8 @@ import socketserver
 import json
 from dotenv import load_dotenv
 
-from server.utils import sign_verificator
-from server.db.utils import database
+from utils import sign_verificator
+from db.utils import database
 
 
 load_dotenv()
