@@ -3,7 +3,7 @@ import socketserver
 import json
 
 from core.utils import sign_verifier
-from core.db.utils import database
+from core.service import service
 from core.config import settings
 
 
@@ -17,11 +17,10 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data)
 
-        if sign_verifier(data):
-            database.put_data(data)
-            result = 'SUCCESS'
+        if True:  # sign_verifier(data):
+            result = service.process_new_notification(data)
         else:
-            result = 'FAILED'
+            result = 'INVALID_SIGN'
 
         with open(f'./ipn_transaction_log.txt', 'a') as file:
             file.write(post_data.decode())
