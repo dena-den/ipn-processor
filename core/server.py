@@ -17,7 +17,7 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data)
 
-        if True:  # sign_verifier(data):
+        if sign_verifier(data):
             result = service.process_new_notification(data)
         else:
             result = 'INVALID_SIGN'
