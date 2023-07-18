@@ -3,14 +3,17 @@ from core.db.base import database
 
 class Service:
     def process_new_notification(self, data):
-        if data['confirmation'] < 3:
-            return 'IN_PROGRESS'
-        elif data['type'] == 'in':
-            self.process_deposit(data)
-            return 'SUCCESSFUL_DEPOSIT'
+        if data['type'] == 'in':
+            if data['confirmation'] == 0:
+                return 'IN_PROGRESS'
+            else:
+                self.process_deposit(data)
+                return 'SUCCESSFUL_DEPOSIT'
+
         elif data['type'] == 'out':
             self.process_withdrawal(data)
             return 'SUCCESSFUL_WITHDRAWAL'
+
         else:
             return 'UNKNOWN_TYPE'
 

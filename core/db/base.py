@@ -1,6 +1,5 @@
 from sqlalchemy import select, insert, update, create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from datetime import datetime
 
 from core.db.schemas import *
 from core.config import settings

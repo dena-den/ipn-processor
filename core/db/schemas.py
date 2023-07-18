@@ -20,7 +20,6 @@ class Users(Base, Dates):
     tg_id: Mapped[int] = mapped_column(unique=True, comment="Telegram id")
     username: Mapped[str] = mapped_column(String(100), comment="Telegram login")
     phone: Mapped[str] = mapped_column(String(100), default='')
-    is_admin: Mapped[bool] = mapped_column(default=False)
     is_banned: Mapped[bool] = mapped_column(default=False)
 
     wallet = relationship("Wallets", back_populates="user")
@@ -71,6 +70,7 @@ class Withdrawals(Base, Dates):
     message_id: Mapped[int] = mapped_column(default=0)
     chat_name: Mapped[str] = mapped_column(String(100), default='')
     sign: Mapped[str] = mapped_column(String(50))
+    is_user_notified: Mapped[bool] = mapped_column(default=False)
 
     currency = relationship("Currencies", foreign_keys=[currency_id])
     wallet = relationship("Wallets", foreign_keys=[wallet_id])
@@ -88,6 +88,7 @@ class Deposits(Base, Dates):
     txid: Mapped[str] = mapped_column(String(100), comment="hash")
     state: Mapped[bool]
     sign: Mapped[str] = mapped_column(String(50))
+    is_user_notified: Mapped[bool] = mapped_column(default=False)
 
     currency = relationship("Currencies", foreign_keys=[currency_id])
     wallet = relationship("Wallets", foreign_keys=[wallet_id])
