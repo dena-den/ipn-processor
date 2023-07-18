@@ -49,6 +49,7 @@ class Database:
                 'address_from': data['from'],
                 'address_to': data['to'],
                 'txid': data['txid'],
+                'tg_id_from': data['label'],
                 'state': True,
                 'refund': False,
                 'sign': data['sign'],

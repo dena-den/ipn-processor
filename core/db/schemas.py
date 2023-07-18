@@ -63,6 +63,7 @@ class Withdrawals(Base, Dates):
     address_to: Mapped[str] = mapped_column(String(34))
     aml: Mapped[str] = mapped_column(String(10), default='')
     txid: Mapped[str] = mapped_column(String(100), comment="hash")
+    tg_id_from: Mapped[int]
     state: Mapped[bool]
     gate: Mapped[str] = mapped_column(String(50), default='')
     refund: Mapped[bool]
