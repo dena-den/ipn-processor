@@ -70,6 +70,7 @@ class Withdrawals(Base, Dates):
     chat_id: Mapped[int] = mapped_column(default=0)
     message_id: Mapped[int] = mapped_column(default=0)
     chat_name: Mapped[str] = mapped_column(String(100), default='')
+    confirmation: Mapped[int]
     sign: Mapped[str] = mapped_column(String(50))
     is_user_notified: Mapped[bool] = mapped_column(default=False)
 
@@ -88,6 +89,7 @@ class Deposits(Base, Dates):
     aml: Mapped[str] = mapped_column(String(10), default='')
     txid: Mapped[str] = mapped_column(String(100), comment="hash")
     state: Mapped[bool]
+    confirmation: Mapped[int]
     sign: Mapped[str] = mapped_column(String(50))
     is_user_notified: Mapped[bool] = mapped_column(default=False)
 

@@ -30,6 +30,7 @@ class Database:
                 'address_to': data['to'],
                 'txid': data['txid'],
                 'state': True,
+                'confirmation': data['confirmation'],
                 'sign': data['sign'],
             }
             session.execute(insert(Deposits), params)
@@ -52,6 +53,7 @@ class Database:
                 'tg_id_from': data['label'],
                 'state': True,
                 'refund': False,
+                'confirmation': data['confirmation'],
                 'sign': data['sign'],
             }
             session.execute(insert(Withdrawals), params)
