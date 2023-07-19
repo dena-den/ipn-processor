@@ -71,17 +71,18 @@ class Database:
             }
             session.execute(insert(Withdrawals), params)
 
-            total_amount = float(data['amount']) + float(label_data['bot_commission'])
-            stmt = (
-                update(Wallets)
-                .where(
-                    Wallets.user_id == Users.id,
-                    Users.tg_id == label_data['tg_id'],
-                    Wallets.currency_id == currency_id,
+            if data['confirmation'] == 0:
+                total_amount = float(data['amount']) + float(label_data['bot_commission'])
+                stmt = (
+                    update(Wallets)
+                    .where(
+                        Wallets.user_id == Users.id,
+                        Users.tg_id == label_data['tg_id'],
+                        Wallets.currency_id == currency_id,
+                    )
+                    .values(frozen_amount=Wallets.frozen_amount - total_amount)
                 )
-                .values(frozen_amount=Wallets.frozen_amount - total_amount)
-            )
-            session.execute(stmt)
+                session.execute(stmt)
 
             session.commit()
 
