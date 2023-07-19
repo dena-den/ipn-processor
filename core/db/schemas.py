@@ -64,6 +64,7 @@ class Withdrawals(Base, Dates):
     aml: Mapped[str] = mapped_column(String(10), default='')
     txid: Mapped[str] = mapped_column(String(100), comment="hash")
     tg_id_from: Mapped[int]
+    abs_bot_commission: Mapped[float]
     state: Mapped[bool]
     gate: Mapped[str] = mapped_column(String(50), default='')
     refund: Mapped[bool]
@@ -128,3 +129,10 @@ class Comments(Base, Dates):
     comment: Mapped[str] = mapped_column(String(250))
 
     user = relationship("Users", foreign_keys=[user_id])
+
+
+class GlobalParameters(Base):
+    __tablename__ = 'global_parameters'
+
+    name: Mapped[str] = mapped_column(String(50))
+    value: Mapped[float]

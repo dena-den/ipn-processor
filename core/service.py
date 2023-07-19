@@ -12,16 +12,16 @@ class Service:
             return 'SUCCESSFUL_WITHDRAWAL'
 
         else:
-            return 'UNKNOWN_TYPE'
+            return 'UNKNOWN_NOTIFICATION'
 
     def process_deposit(self, data):
         currency_id = database.get_currency_id(data['currency'])
-        wallet_id = database.get_wallet_id(data['to'])
+        wallet_id = database.get_wallet_id_by_address(data['to'])
         database.insert_deposit(data, currency_id, wallet_id)
 
     def process_withdrawal(self, data):
         currency_id = database.get_currency_id(data['currency'])
-        wallet_id = database.get_wallet_id(data['from'])
+        wallet_id = database.get_wallet_id_by_address(data['from'])
         database.insert_withdrawal(data, currency_id, wallet_id)
 
 
