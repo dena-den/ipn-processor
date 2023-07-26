@@ -2,8 +2,6 @@ from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.dialects.mysql import DATETIME, DOUBLE
 from sqlalchemy.orm import Mapped, as_declarative, mapped_column, relationship
 
-from bot.common import constants
-
 
 @as_declarative()
 class Base:
@@ -55,7 +53,7 @@ class Addresses(Base, Dates):
     wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
     address: Mapped[str] = mapped_column(String(80), nullable=False)
     name: Mapped[str] = mapped_column(
-        String(30), default=constants.DEPOSIT['main_address']
+        String(30), default='основной адрес'
     )
     qr_code: Mapped[str] = mapped_column(String(200))
 
