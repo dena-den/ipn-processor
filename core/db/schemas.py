@@ -2,6 +2,8 @@ from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.dialects.mysql import DATETIME, DOUBLE
 from sqlalchemy.orm import Mapped, as_declarative, mapped_column, relationship
 
+from bot.common import constants
+
 
 @as_declarative()
 class Base:
@@ -19,7 +21,7 @@ class Users(Base, Dates):
 
     tg_id: Mapped[int] = mapped_column(unique=True, comment="Telegram id")
     username: Mapped[str] = mapped_column(String(100), comment="Telegram login")
-    phone: Mapped[str] = mapped_column(String(100), default='')
+    phone: Mapped[str] = mapped_column(String(100), nullable=True)
     is_banned: Mapped[bool] = mapped_column(default=False)
 
     wallet = relationship("Wallets", back_populates="user")
@@ -42,9 +44,22 @@ class Wallets(Base, Dates):
     currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id"))
     amount = mapped_column(DOUBLE, nullable=False, default=0.00)
     frozen_amount = mapped_column(DOUBLE, nullable=False, default=0.00)
-    address: Mapped[str] = mapped_column(String(34), default='')
 
+    address = relationship("Addresses", back_populates="wallet")
     user = relationship("Users", back_populates="wallet")
+
+
+class Addresses(Base, Dates):
+    __tablename__ = "addresses"
+
+    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
+    address: Mapped[str] = mapped_column(String(80), nullable=False)
+    name: Mapped[str] = mapped_column(
+        String(30), default=constants.DEPOSIT['main_address']
+    )
+    qr_code: Mapped[str] = mapped_column(String(200))
+
+    wallet = relationship("Wallets", back_populates="address")
 
 
 class Currencies(Base):
@@ -58,25 +73,23 @@ class Withdrawals(Base, Dates):
 
     amount = mapped_column(DOUBLE, nullable=False)
     currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id"))
-    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
-    address_from: Mapped[str] = mapped_column(String(34))
-    address_to: Mapped[str] = mapped_column(String(34))
-    aml: Mapped[str] = mapped_column(String(10), default='')
-    txid: Mapped[str] = mapped_column(String(100), comment="hash")
-    tg_id_from: Mapped[int]
+    address_from: Mapped[str] = mapped_column(String(80))
+    address_to: Mapped[str] = mapped_column(String(80))
+    aml: Mapped[str] = mapped_column(String(10), nullable=True)
+    txid: Mapped[str] = mapped_column(String(100))
+    tg_id_from: Mapped[int] = mapped_column(ForeignKey("users.tg_id"))
     abs_bot_commission: Mapped[float]
     state: Mapped[bool]
-    gate: Mapped[str] = mapped_column(String(50), default='')
+    gate: Mapped[str] = mapped_column(String(50), nullable=True)
     refund: Mapped[bool]
-    chat_id: Mapped[int] = mapped_column(default=0)
-    message_id: Mapped[int] = mapped_column(default=0)
-    chat_name: Mapped[str] = mapped_column(String(100), default='')
+    chat_id: Mapped[int] = mapped_column(nullable=True)
+    message_id: Mapped[int] = mapped_column(nullable=True)
+    chat_name: Mapped[str] = mapped_column(String(100), nullable=True)
     confirmation: Mapped[int]
     sign: Mapped[str] = mapped_column(String(50))
     is_user_notified: Mapped[bool] = mapped_column(default=False)
 
     currency = relationship("Currencies", foreign_keys=[currency_id])
-    wallet = relationship("Wallets", foreign_keys=[wallet_id])
 
 
 class Deposits(Base, Dates):
@@ -84,18 +97,15 @@ class Deposits(Base, Dates):
 
     amount = mapped_column(DOUBLE, nullable=False)
     currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id"))
-    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
-    address_from: Mapped[str] = mapped_column(String(34))
-    address_to: Mapped[str] = mapped_column(String(34))
-    aml: Mapped[str] = mapped_column(String(10), default='')
+    address_id: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
+    address_from: Mapped[str] = mapped_column(String(80))
+    aml: Mapped[str] = mapped_column(String(10), nullable=True)
     txid: Mapped[str] = mapped_column(String(100), comment="hash")
     state: Mapped[bool]
-    confirmation: Mapped[int]
     sign: Mapped[str] = mapped_column(String(50))
     is_user_notified: Mapped[bool] = mapped_column(default=False)
 
     currency = relationship("Currencies", foreign_keys=[currency_id])
-    wallet = relationship("Wallets", foreign_keys=[wallet_id])
 
 
 class Commissions(Base, Dates):
@@ -115,11 +125,11 @@ class Exchanges(Base, Dates):
 
     amount = mapped_column(DOUBLE, nullable=False)
     rate = mapped_column(DOUBLE, nullable=False)
-    wallet_id_from: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
-    wallet_id_to: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
+    address_id_from: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
+    address_id_to: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
 
-    wallet_from = relationship("Wallets", foreign_keys=[wallet_id_from])
-    wallet_to = relationship("Wallets", foreign_keys=[wallet_id_to])
+    address_from = relationship("Addresses", foreign_keys=[address_id_from])
+    address_to = relationship("Addresses", foreign_keys=[address_id_to])
 
 
 class Comments(Base, Dates):
