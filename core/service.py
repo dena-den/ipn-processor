@@ -16,13 +16,14 @@ class Service:
 
     def process_deposit(self, data):
         currency_id = database.get_currency_id(data['currency'])
-        wallet_id = database.get_wallet_id_by_address(data['to'])
-        database.insert_deposit(data, currency_id, wallet_id)
+        wallet_id, address_id = database.get_info_by_address(data['to'])
+        database.insert_deposit(
+            data, currency_id, wallet_id, address_id
+        )
 
     def process_withdrawal(self, data):
         currency_id = database.get_currency_id(data['currency'])
-        wallet_id = database.get_wallet_id_by_address(data['from'])
-        database.insert_withdrawal(data, currency_id, wallet_id)
+        database.insert_withdrawal(data, currency_id)
 
 
 service = Service()

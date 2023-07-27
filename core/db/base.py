@@ -17,10 +17,14 @@ class Database:
             stmt = select(Currencies.id).where(Currencies.name == name)
             return session.execute(stmt).scalar()
 
-    def get_wallet_id_by_address(self, address):
+    def get_info_by_address(self, address):
         with self.session() as session:
-            stmt = select(Wallets.id).where(Wallets.address == address)
-            return session.execute(stmt).scalar()
+            stmt = (
+                select(Wallets.id.label('wallet_id'), Addresses.id.label('address_id'))
+                .join(Addresses, Addresses.wallet_id == Wallets.id)
+                .where(Addresses.address == address)
+            )
+            return (session.execute(stmt)).all()[0]
 
     def get_wallet_id_by_tg_id(self, tg_id):
         with self.session() as session:
@@ -31,18 +35,16 @@ class Database:
             )
             return session.execute(stmt).scalar()
 
-    def insert_deposit(self, data, currency_id, wallet_id):
+    def insert_deposit(self, data, currency_id, wallet_id, address_id):
         with self.session() as session:
             params = {
                 'amount': data['amount'],
                 'currency_id': currency_id,
-                'wallet_id': wallet_id,
                 'address_from': data['from'],
-                'address_to': data['to'],
                 'txid': data['txid'],
                 'state': True,
-                'confirmation': data['confirmation'],
                 'sign': data['sign'],
+                'address_id': address_id,
             }
             session.execute(insert(Deposits), params)
 
@@ -52,13 +54,12 @@ class Database:
 
             session.commit()
 
-    def insert_withdrawal(self, data, currency_id, actual_wallet_id):
+    def insert_withdrawal(self, data, currency_id):
         with self.session() as session:
             label_data = json.loads(data['label'])
             params = {
                 'amount': data['amount'],
                 'currency_id': currency_id,
-                'wallet_id': actual_wallet_id,
                 'address_from': data['from'],
                 'address_to': data['to'],
                 'txid': data['txid'],
