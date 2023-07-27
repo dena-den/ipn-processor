@@ -22,7 +22,7 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             result = 'INVALID_SIGN'
 
-        with open(f'../ipn_transactions.log', 'a') as file:
+        with open(f'../logs_server/ipn_transactions.log', 'a') as file:
             file.write(post_data.decode())
             file.write(f' - {result}\n')
 
